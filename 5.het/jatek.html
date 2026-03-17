@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Számkitaláló Játék</title>
+</head>
+<body>
+    <h4>Számkitaláló Játék</h4>
+    <p>A játék automatikusan elindul. Frissítsd az oldalt (F5) egy új játékhoz!</p>
+
+    <script>
+        function startJatek() {
+            const gondoltSzam = Math.floor(Math.random() * 1000001);
+            const maxTipp = 20;
+            let kitalalta = false;
+
+            for (let i = 1; i <= maxTipp; i++) {
+                let bemenet = prompt(`Kérek egy számot 0 és 1 000 000 között! (${i}/20. próbálkozás)`);
+
+                if (bemenet === null) {
+                    alert("A játék megszakítva.");
+                    return; 
+                }
+
+                let tipp = parseInt(bemenet);
+
+
+                if (isNaN(tipp)) {
+                    alert("Ez nem egy érvényes szám! Kérlek, próbáld újra.");
+                    i--; 
+                    continue; 
+                }
+
+                if (tipp === gondoltSzam) {
+                    alert(`Gratulálok, ${i} lépésből eltaláltad!`);
+                    kitalalta = true;
+                    break; 
+                    alert(`${i}. tipp nem talált: A megoldás kisebb.`);
+                } else if (tipp < gondoltSzam) {
+                    alert(`${i}. tipp nem talált: A megoldás nagyobb.`);
+                }
+            }
+
+            
+            if (!kitalalta) {
+                alert(`Sajnos ez most nem sikerült! A megoldás: ${gondoltSzam}`);
+            }
+        }
+
+        startJatek();
+    </script>
+</body>
+</html>
