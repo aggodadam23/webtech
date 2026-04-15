@@ -35,13 +35,13 @@
         document.getElementById('searchButton').addEventListener('click', () => {
             const query = document.getElementById('searchInput').value.trim();
 
-            // 1. Üres keresőkifejezés vizsgálata (alert hibaüzenet)
+
             if (query === '') {
                 alert('Hiba: Kérlek, adj meg egy keresőkifejezést!');
-                return; // Megszakítjuk a futást
+                return; 
             }
 
-            // 2. Keresés a GitHub API-n a megadott név alapján
+
             fetch(`https://api.github.com/search/users?q=${query}`)
                 .then(response => {
                     if (!response.ok) {
@@ -51,18 +51,16 @@
                 })
                 .then(data => {
                     const resultsDiv = document.getElementById('results');
-                    resultsDiv.innerHTML = ''; // Előző találatok kitörlése
+                    resultsDiv.innerHTML = ''; 
 
-                    // Ha nincs találat
                     if (data.items.length === 0) {
                         resultsDiv.innerHTML = '<div class="col"><div class="card"><p>Nincs találat ilyen néven.</p></div></div>';
                         return;
                     }
 
-                    // 3. Találatok listázása: Név és profilkép megjelenítése kártyákon
+
                     data.items.forEach(user => {
-                        const userCard = document.createElement('div');
-                        // Felhasználjuk a te rácsszerkezeted (grid) class-ait
+                        const userCard = document.createElement('div')
                         userCard.className = 'col col-3'; 
                         
                         userCard.innerHTML = `
