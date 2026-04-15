@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Felhasználók keresése</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="navbar">
+        <a href="index.html">Főoldal</a>
+        <a href="user-search.html">Felhasználó kereső</a>
+    </div>
+
+    <div class="container">
+        <h1>GitHub Felhasználó Kereső</h1>
+        
+        <div class="card">
+            <p>Keresd meg a felhasználókat a GitHubon!</p>
+            <div class="row" style="align-items: center;">
+                <div class="col-4">
+                    <input type="text" id="searchInput" placeholder="Írd be a felhasználónevet...">
+                </div>
+                <div class="col">
+                    <button id="searchButton" class="btn btn-primary">Keresés</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="results" class="row">
+            </div>
+    </div>
+
+    <script>
+        document.getElementById('searchButton').addEventListener('click', () => {
+            const query = document.getElementById('searchInput').value.trim();
+
+            // 1. Üres keresőkifejezés vizsgálata (alert hibaüzenet)
+            if (query === '') {
+                alert('Hiba: Kérlek, adj meg egy keresőkifejezést!');
+                return; // Megszakítjuk a futást
+            }
+
+            // 2. Keresés a GitHub API-n a megadott név alapján
+            fetch(`https://api.github.com/search/users?q=${query}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Hiba a lekérdezés során.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = ''; // Előző találatok kitörlése
+
+                    // Ha nincs találat
+                    if (data.items.length === 0) {
+                        resultsDiv.innerHTML = '<div class="col"><div class="card"><p>Nincs találat ilyen néven.</p></div></div>';
+                        return;
+                    }
+
+                    // 3. Találatok listázása: Név és profilkép megjelenítése kártyákon
+                    data.items.forEach(user => {
+                        const userCard = document.createElement('div');
+                        // Felhasználjuk a te rácsszerkezeted (grid) class-ait
+                        userCard.className = 'col col-3'; 
+                        
+                        userCard.innerHTML = `
+                            <div class="card" style="text-align: center;">
+                                <img src="${user.avatar_url}" alt="${user.login} profilképe" style="width: 100px; height: 100px; border-radius: 50%; margin-bottom: 10px; border: 2px solid #ccc;">
+                                <h3>${user.login}</h3>
+                                <a href="${user.html_url}" target="_blank" class="btn btn-secondary" style="font-size: 14px;">Profil megtekintése</a>
+                            </div>
+                        `;
+                        resultsDiv.appendChild(userCard);
+                    });
+                })
+                .catch(error => {
+                    console.error("Hiba:", error);
+                    alert("Hálózati hiba történt, nem sikerült lekérni az adatokat!");
+                });
+        });
+    </script>
+</body>
+</html>
