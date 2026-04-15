@@ -27,26 +27,21 @@
             </div>
         </div>
 
-        <div id="results" class="row">
-            </div>
+        <div id="results" class="row"></div>
     </div>
 
     <script>
         document.getElementById('searchButton').addEventListener('click', () => {
             const query = document.getElementById('searchInput').value.trim();
 
-
             if (query === '') {
                 alert('Hiba: Kérlek, adj meg egy keresőkifejezést!');
                 return; 
             }
 
-
             fetch(`https://api.github.com/search/users?q=${query}`)
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Hiba a lekérdezés során.');
-                    }
+                    if (!response.ok) throw new Error('Hiba a lekérdezés során.');
                     return response.json();
                 })
                 .then(data => {
@@ -58,23 +53,21 @@
                         return;
                     }
 
-
                     data.items.forEach(user => {
-                        const userCard = document.createElement('div')
+                        const userCard = document.createElement('div');
                         userCard.className = 'col col-3'; 
                         
                         userCard.innerHTML = `
                             <div class="card" style="text-align: center;">
-                                <img src="${user.avatar_url}" alt="${user.login} profilképe" style="width: 100px; height: 100px; border-radius: 50%; margin-bottom: 10px; border: 2px solid #ccc;">
+                                <img src="${user.avatar_url}" style="width: 100px; height: 100px; border-radius: 50%; margin-bottom: 10px; border: 2px solid #ccc;">
                                 <h3>${user.login}</h3>
-                                <a href="${user.html_url}" target="_blank" class="btn btn-secondary" style="font-size: 14px;">Profil megtekintése</a>
+                                <a href="user.html?id=${user.login}" class="btn btn-secondary" style="font-size: 14px;">Adatlap megtekintése</a>
                             </div>
                         `;
                         resultsDiv.appendChild(userCard);
                     });
                 })
                 .catch(error => {
-                    console.error("Hiba:", error);
                     alert("Hálózati hiba történt, nem sikerült lekérni az adatokat!");
                 });
         });

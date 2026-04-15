@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Felhasználó Adatlapja</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="navbar">
+        <a href="index.html">Főoldal</a>
+        <a href="user-search.html">Felhasználó kereső</a>
+    </div>
+
+    <div class="container">
+        <div id="profileContent" style="max-width: 600px; margin: 20px auto;"></div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id');
+        const profileContent = document.getElementById('profileContent');
+
+        if (!userId) {
+            profileContent.innerHTML = '<div class="card"><p>Hiba: Nincs megadva felhasználó!</p></div>';
+        } else {
+            fetch(`https://api.github.com/users/${userId}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Hálózati hiba');
+                    return response.json();
+                })
+                .then(data => {
+                    let html = '<div class="card" style="text-align: center;">';
+                    
+                    if (data.avatar_url) {
+                        html += `<img src="${data.avatar_url}" style="width: 150px; height: 150px; border-radius: 50%; border: 3px solid #ccc; margin-bottom: 15px;">`;
+                    }
+                    if (data.name) {
+                        html += `<h2>${data.name}</h2>`;
+                    } else {
+                        html += `<h2>${data.login}</h2>`;
+                    }
+                    if (data.bio) {
+                        html += `<p style="font-style: italic;">${data.bio}</p>`;
+                    }
+                    if (data.location) {
+                        html += `<p>Helyszín: <strong>${data.location}</strong></p>`;
+                    }
+                    if (data.blog) {
+                        html += `<p>Weboldal: <a href="${data.blog}" target="_blank">${data.blog}</a></p>`;
+                    }
+                    
+                    html += '<div class="row" style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">';
+                    
+                    if (data.public_repos !== null && data.public_repos !== undefined && data.public_repos !== "") {
+                        html += `<div class="col">Nyilvános repók<br><strong>${data.public_repos}</strong></div>`;
+                    }
+                    if (data.followers !== null && data.followers !== undefined && data.followers !== "") {
+                        html += `<div class="col">Követők<br><strong>${data.followers}</strong></div>`;
+                    }
+                    
+                    html += '</div></div>';
+                    profileContent.innerHTML = html;
+                })
+                .catch(error => {
+                    profileContent.innerHTML = '<div class="card"><p>Hiba történt az adatok betöltésekor.</p></div>';
+                });
+        }
+    </script>
+</body>
+</html>
